@@ -1,0 +1,114 @@
+
+MOSTRAR LAS FECHAS  SU DIA
+SELECT date_time, DATE_FORMAT(date_time, '%W') AS dia, status, punch, active, InstitutionStaffIdInstitutionStaff 
+FROM `attendances` 
+WHERE attendances.InstitutionStaffIdInstitutionStaff = 1 AND punch = 0;
+
+
+SELECT DISTINCT  
+    institution_staff.StaffIdCard, 
+    attendances.date_time, DATE_FORMAT(date_time, '%W') AS dia,
+    CASE
+        WHEN attendances.punch = 0 AND TIME(attendances.date_time) <= (work_schedule.arrival_time + work_schedule_institution.entry_tolerance) THEN 'Asistió'
+        ELSE 'Tarde'
+    END AS EstadoAsistencia
+FROM 
+    work_schedule_institution 
+LEFT JOIN 
+    work_schedule ON work_schedule.id_work_schedule = work_schedule_institution.WorkScheduleIdWorkSchedule
+LEFT JOIN 
+    institution_staff ON work_schedule_institution.InstitutionStaffIdInstitutionStaff = institution_staff.id_institution_staff
+LEFT JOIN 
+    attendances ON attendances.InstitutionStaffIdInstitutionStaff = institution_staff.id_institution_staff
+WHERE 
+    institution_staff.InstitutionShiftIdInstitutionShift = 1 and attendances.punch=0;
+
+
+
+
+SELECT DISTINCT staffs.id_card as DNI, 
+				concat(staffs.names,' ', staffs.first_name) as nombres, 
+                type_staffs.type_staff as cargo,
+                institution_staff.staff_condition,
+                institution_staff.working_hours as joranda_laboral,
+                 ( GetRandomValue(1,2) ) as d1,
+                 ( GetRandomValue(5,10)) as d2,
+                 ( GetRandomValue(10,20)) as d3,
+                 ( GetRandomValue(30,40)) as d4,
+                 ( GetRandomValue(30,40)) as d5,
+                 ( GetRandomValue(30,40)) as d6,
+                 ( GetRandomValue(30,40)) as d7,
+                 ( GetRandomValue(30,40)) as d8,
+                 ( GetRandomValue(30,40)) as d9,
+                 ( GetRandomValue(30,40)) as d10,
+                 ( GetRandomValue(30,40)) as d11,
+                 ( GetRandomValue(30,40)) as d12,
+                 ( GetRandomValue(30,40)) as d13,
+                 ( GetRandomValue(30,40)) as d14,
+                 ( GetRandomValue(30,40)) as d15,
+                 ( GetRandomValue(30,40)) as d16,
+                 ( GetRandomValue(30,40)) as d17,
+                 ( GetRandomValue(30,40)) as d18
+                 
+from staffs
+JOIN institution_staff on staffs.id_card = institution_staff.StaffIdCard
+JOIN type_staffs on type_staffs.id_type_staff = institution_staff.TypeStaffIdTypeStaff;
+
+
+<Document>
+   <Page size="A4" style={styles.page}>
+     <View style={styles.section}>
+       <Text>N°: {filaAleatoria.N}</Text>
+       <Text>DNI: {filaAleatoria.DNI}</Text>
+       <Text>APELLIDOS Y NOMBRES: {filaAleatoria.ApellidosYNombres}</Text>
+       <Text>CARGO: {filaAleatoria.Cargo}</Text>
+       <Text>CONDICION: {filaAleatoria.Condicion}</Text>
+       <Text>JORNADA LABORAL: {filaAleatoria.JornadaLaboral}</Text>
+       <Text>DÍAS LABORABLES DEL MES DE NOVIEMBRE 2023: {filaAleatoria.DiasLaborablesDelMesDeNoviembre2023}</Text>
+       <Text>TOTAL: {filaAleatoria.Total}</Text>
+     </View>
+   </Page>
+ </Document>
+
+==================================================================
+SELECT
+    institution_staff.StaffIdCard,
+    CONCAT(staffs.names, staffs.first_name) AS nombres,
+    attendances.date_time,
+    work_schedule_institution.day,
+    DAYOFWEEK(date_time) AS dia,
+    CASE
+        WHEN attendances.punch = 0 AND DAYOFWEEK(date_time) = work_schedule_institution.day
+             AND TIME(attendances.date_time) <= (work_schedule.arrival_time + work_schedule_institution.entry_tolerance) THEN 'A'
+        ELSE 'T'
+    END AS EstadoAsistencia
+FROM 
+    work_schedule_institution 
+LEFT JOIN 
+    work_schedule ON work_schedule.id_work_schedule = work_schedule_institution.WorkScheduleIdWorkSchedule
+LEFT JOIN 
+    institution_staff ON work_schedule_institution.InstitutionStaffIdInstitutionStaff = institution_staff.id_institution_staff
+LEFT JOIN 
+    staffs ON staffs.id_card = institution_staff.StaffIdCard
+LEFT JOIN 
+    attendances ON attendances.InstitutionStaffIdInstitutionStaff = institution_staff.id_institution_staff
+WHERE 
+    institution_staff.id_institution_staff = 1 AND 
+    attendances.punch = 0 AND DAYOFWEEK(date_time) = work_schedule_institution.day AND
+    MONTH(attendances.date_time) = 11 AND
+    YEAR(attendances.date_time) = 2023
+GROUP BY
+    institution_staff.StaffIdCard,
+    attendances.date_time,
+    work_schedule_institution.day,
+    EstadoAsistencia;
+
+==================================================================
+
+configuración nvm 
+
+==================================================================
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+source ~/.bashrc    ó   . ~/.bashrc
+
+nvm --version
