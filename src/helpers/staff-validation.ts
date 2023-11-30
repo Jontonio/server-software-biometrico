@@ -19,13 +19,13 @@ export const staffValidator = () => {
                        .isEmpty()
                        .withMessage('El documento de identidad es requerido')
                        .bail()
-                       .isLength({min:8, max:20})
+                       .isLength({ min:8, max:20 })
                        .withMessage('El documento de identidad debe ser almenos de 8 dígitos'),
         body('names').not()
                        .isEmpty()
                        .withMessage('Los nombres del personal es requerido')
                        .bail()
-                       .isLength({max:45})
+                       .isLength({ max:45 })
                        .withMessage('Los nombres del personal debe ser como máximo de 45 carácteres'),
         body('first_name').not()
                        .isEmpty()
@@ -48,16 +48,14 @@ export const staffValidator = () => {
                        .bail()
                        .isEmail()
                        .withMessage('El email del personal debe ser válido')
-                       .bail()
-                       .custom((email) => existEmail(email, false) )
                        .bail(),
         body('phone_numer').optional()
                        .isLength({max:9})
                        .withMessage('El celular del personal debe ser 9 dígitos númericos'),
         body('staff_condition').not()
-                    .isEmpty()
-                    .withMessage('La condición del personal es requerido')
-                    .bail(),
+                        .isEmpty()
+                        .withMessage('La condición del personal es requerido')
+                        .bail(),
         body('working_hours').not()
                     .isEmpty()
                     .withMessage('La jornada laboral del personal es requerido')
@@ -101,7 +99,7 @@ export const idCardValidator = () => {
                         .isLength({min:8, max:20})
                         .withMessage('El documento de identidad debe ser almenos de 8 dígitos y máximo de 20 dígitos')
                         .bail()
-                        .custom((id_card) => existStaff(id_card, false))
+                        // .custom((id_card) => existStaff(id_card, false))
     ]
 }
 

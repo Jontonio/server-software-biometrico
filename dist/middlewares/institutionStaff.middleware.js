@@ -18,15 +18,18 @@ const existStaffAtTheInstitution = (req, res, next) => __awaiter(void 0, void 0,
         if (!req.user) {
             return res.status(401).json(new Response_1.ResponseServer(`Error en el servidor al verificar usuario`, false));
         }
-        const { id_card, InstitutionShift } = req.body;
+        const { id_card, StaffIdCard, InstitutionShift, InstitutionShiftIdInstitutionShift } = req.body;
+        const docStaff = id_card ? id_card : StaffIdCard;
+        const idShift = InstitutionShift ? InstitutionShift : InstitutionShiftIdInstitutionShift;
         const staffAtTheIE = yield models_1.InstitutionStaff.findOne({
-            where: { StaffIdCard: id_card,
-                InstitutionShiftIdInstitutionShift: InstitutionShift,
+            where: { StaffIdCard: docStaff,
+                InstitutionShiftIdInstitutionShift: idShift,
                 status: true }
         });
         if (staffAtTheIE) {
-            const staff = yield models_1.Staff.findByPk(id_card);
-            return res.status(409).json(new Response_1.ResponseServer(`El personal ${staff === null || staff === void 0 ? void 0 : staff.get('names')} ${staff === null || staff === void 0 ? void 0 : staff.get('first_name')} ya se encuentra registrado en la institución con el turno`, false, staff));
+            const staff = yield models_1.Staff.findByPk(docStaff);
+            const message = `El personal ${staff === null || staff === void 0 ? void 0 : staff.get('names')} ${staff === null || staff === void 0 ? void 0 : staff.get('first_name')} ya se encuentra registrado en la institución con el turno`;
+            return res.status(409).json(new Response_1.ResponseServer(message, false));
         }
         next();
     }

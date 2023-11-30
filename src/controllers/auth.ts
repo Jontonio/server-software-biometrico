@@ -3,6 +3,7 @@ import { ResponseServer } from "../class/Response";
 import { generateToken, getPayloadToken, comparePassword, hasPassword } from "../helpers";
 import { Data } from "../class/Payload";
 import { User, Role } from "../models";
+import { globalConfig } from "../config/config";
 
 export const login = async (req:Request, res:Response) => {
     try {
@@ -12,7 +13,7 @@ export const login = async (req:Request, res:Response) => {
         const user = await User.findOne({ where:{ email }, include:Role });
         // verify if exist user
         if(!user){
-            return res.status(401).json( new ResponseServer('Usuario y/o email inválido', false, null))
+            return res.status(401).json( new ResponseServer('Usuario y/o email inválido', false))
         }
         // verify if user is active
         if( !user.dataValues.status ){
@@ -22,18 +23,18 @@ export const login = async (req:Request, res:Response) => {
         const check = await comparePassword(password, user.dataValues.password);
         // verify if the password is match
         if(!check){
-            return res.status(401).json( new ResponseServer('Usuario y/o email inválido', false, null))
+            return res.status(401).json( new ResponseServer('Usuario y/o email inválido', false))
         }
         // generate data for payload
         const data = new Data(user.dataValues.id_user, user.dataValues.names, user.dataValues.email);
         // generate user token 
-        const token = generateToken( data );
+        const token = generateToken( data, globalConfig.SECRET_KEY_TOKEN_SYSTEM, '12h');
         // return response message
         return res.status(200).json( new ResponseServer(`Hola ${user.dataValues.names} bienvenid@ al sistema SIREA`, true,{ token, ...data }))
 
     } catch (e) {
         console.error(e);
-        return res.status(500).json( new ResponseServer('Ocurrio un error en login', false, null))
+        return res.status(500).json( new ResponseServer('Ocurrio un error en login', false))
     }
 }
 
@@ -42,7 +43,7 @@ export const checkAuth = (req:Request, res:Response) => {
         // get authorization from headers
         const { authorization } = req.headers;
         // get data from token
-        const data = getPayloadToken(authorization!)
+        const data = getPayloadToken(authorization!, globalConfig.SECRET_KEY_TOKEN_SYSTEM)
         // return response message
         return  res.status(200).json( new ResponseServer(`Usuario autentificado`, true, data))
         
@@ -73,10 +74,10 @@ export const updatePassword = async (req:Request, res:Response) => {
         const newHashPassword = hasPassword(newPassword);
         await user?.set({ password: newHashPassword }).save();
 
-        return  res.status(200).json( new ResponseServer(`Contraseña actualizada correctamente`, true, null ))
+        return  res.status(200).json( new ResponseServer(`Contraseña actualizada correctamente`, true ))
         
     } catch (e) {
         console.error(e);
-        return res.status(500).json( new ResponseServer('Ocurrio un error al actualizar el password', false, null))
+        return res.status(500).json( new ResponseServer('Ocurrio un error al actualizar el password', false))
     }
 }

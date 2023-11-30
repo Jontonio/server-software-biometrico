@@ -1,20 +1,63 @@
 import { body, check } from "express-validator"
-import { existInstitution } from "./institution-validation"
 import { existStaff } from "./staff-validation"
 import { InstitutionStaff } from "../models/InstitutionStaff"
+import { existInstitutionIdShift } from "./institution-shift-validation copy"
+import { existIdTypeStaff } from "./type-staff-validation"
 
 export const institutionStaffValidator = () => {
     return [
-        body('InstitutionModularCode').not()
-              .isEmpty()
-              .withMessage('El código modular de la institución es requerido')
-              .bail()
-              .custom( (InstitutionModularCode) => existInstitution(InstitutionModularCode, false )),
-        body('StaffIdCard').not()
-              .isEmpty()
-              .withMessage('El documento de identidad del personal es requerido')
-              .bail()
-              .custom( (StaffIdCard) => existStaff(StaffIdCard, false ))
+      body('staff_condition').not()
+                        .isEmpty()
+                        .withMessage('La condición del personal es requerido')
+                        .bail(),
+      body('working_hours').not()
+                    .isEmpty()
+                    .withMessage('La jornada laboral del personal es requerido')
+                    .bail()
+                    .isNumeric()
+                    .withMessage('La joranda laboral del personal deber ser númerico')
+                    .bail(),
+      body('InstitutionShiftIdInstitutionShift').not()
+                    .isEmpty()
+                    .withMessage('El id de la institución en turno es requerido')
+                    .bail()
+                    .custom((InstitutionShiftIdInstitutionShift) => existInstitutionIdShift(InstitutionShiftIdInstitutionShift))
+                    .bail(),
+      body('StaffIdCard').not()
+            .isEmpty()
+            .withMessage('El documento de identidad es requerido')
+            .bail()
+            .isLength({ min:8, max:20 })
+            .withMessage('El documento de identidad debe ser almenos de 8 dígitos')
+            .custom( (StaffIdCard) => existStaff(StaffIdCard, false )),
+      body('TypeStaffIdTypeStaff').not()
+            .isEmpty()
+            .withMessage('El id del tipo de personal es requerido')
+            .bail()
+            .custom((TypeStaff) => existIdTypeStaff(TypeStaff))
+            .bail(),
+    ]
+}
+
+export const institutionStaffUpdateValidator = () => {
+    return [
+      body('staff_condition').not()
+                        .isEmpty()
+                        .withMessage('La condición del personal es requerido')
+                        .bail(),
+      body('working_hours').not()
+                    .isEmpty()
+                    .withMessage('La jornada laboral del personal es requerido')
+                    .bail()
+                    .isNumeric()
+                    .withMessage('La joranda laboral del personal deber ser númerico')
+                    .bail(),
+      body('TypeStaffIdTypeStaff').not()
+            .isEmpty()
+            .withMessage('El id del tipo de personal es requerido')
+            .bail()
+            .custom((TypeStaff) => existIdTypeStaff(TypeStaff))
+            .bail(),
     ]
 }
 

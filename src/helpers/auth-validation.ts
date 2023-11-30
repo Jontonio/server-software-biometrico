@@ -17,6 +17,26 @@ export const authValidator = () => {
     ]
 }
 
+export const emailValidator = () => {
+    return[
+        body('email').not()
+                     .isEmpty()
+                     .withMessage('El email es un campo requerido')
+                     .bail()
+                     .isEmail()
+                     .withMessage("El email digitado es inválido")
+    ]
+}
+
+export const htmlValidator = () => {
+    return[
+        body('html').not()
+                     .isEmpty()
+                     .withMessage('El campo texto a enviar es un campo requerido')
+                     .bail()
+    ]
+}
+
 export const authValidatorChangePassword = () => {
     return [
         body('currentPassword').not()
@@ -32,6 +52,26 @@ export const authValidatorChangePassword = () => {
                         .isEmpty()
                         .withMessage('La contraseña nueva es requerida')
                         .custom((newPassword) => validatePassword(newPassword)),
+
+    ]
+
+}
+
+export const validateChangePassword = () => {
+    return [
+        body('confirmPassword').not()
+                        .isEmpty()
+                        .withMessage('La contraseña de confirmación es requerida')
+                        .bail()
+                        .custom((confirmPassword) => validatePassword(confirmPassword)),
+        body('newPassword').not()
+                        .isEmpty()
+                        .withMessage('La contraseña nueva es requerida')
+                        .bail()
+                        .custom((newPassword) => validatePassword(newPassword)),
+        body('credentials').not()
+                        .isEmpty()
+                        .withMessage('Las credenciales de verificación es requerida')
 
     ]
 
@@ -54,6 +94,7 @@ const validatePassword = (pass:string) => {
     }
     return true;
 }
+
 const existIdUser = async (id_user:string) => {
 
     if(!id_user){

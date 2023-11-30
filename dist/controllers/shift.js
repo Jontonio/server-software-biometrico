@@ -9,9 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getShifts = exports.registerShift = void 0;
+exports.deleteInstitutionShift = exports.getShifts = exports.registerShift = void 0;
 const Response_1 = require("../class/Response");
 const Shift_1 = require("../models/Shift");
+const InstitutionShift_1 = require("../models/InstitutionShift");
 const registerShift = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { body } = req;
@@ -39,8 +40,27 @@ const getShifts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (e) {
         console.error(e);
-        return res.status(500).json(new Response_1.ResponseServer('Ocurrio un error al obtener turnos', false, null));
+        return res.status(500).json(new Response_1.ResponseServer('Ocurrio un error al obtener turnos', false));
     }
 });
 exports.getShifts = getShifts;
+const deleteInstitutionShift = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // get id_institution_shift from params
+        const { id_institution_shift } = req.params;
+        // find one institution shift with modular id_institution_shift
+        const institution = yield InstitutionShift_1.InstitutionShift.findOne({
+            where: { id_institution_shift }
+        });
+        // update institution
+        const respInstitution = yield institution.set({ status: false }).save();
+        // return message response
+        return res.status(200).json(new Response_1.ResponseServer('Institución con turno eliminada correctamente', true, respInstitution));
+    }
+    catch (e) {
+        console.error(e);
+        return res.status(500).json(new Response_1.ResponseServer('Ocurrio un error al eliminar institución con turno', false));
+    }
+});
+exports.deleteInstitutionShift = deleteInstitutionShift;
 //# sourceMappingURL=shift.js.map

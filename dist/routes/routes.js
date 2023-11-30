@@ -17,6 +17,8 @@ const routes = [
     routes_1.routerReport,
     routes_1.routerFile,
     routes_1.routerShift,
+    routes_1.routerSearch,
+    routes_1.routerEmail,
     routes_1.routerJustification
 ];
 exports.default = routes;

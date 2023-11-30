@@ -11,13 +11,27 @@ export const existStaff = async (req: CustomRequest | any, res:Response, next:Ne
             return res.status(401).json( new ResponseServer(`Error en el servidor al verificar usuario`, false, null));
         }
         // get data from user 
-        const { id_card } = req.body;
+        const { id_card, email } = req.body;
         
-        const staff = await Staff.findByPk( id_card );
+        // find with id card
+        const staffWithIdCard = await Staff.findByPk( id_card );
 
-        if(staff){
-            return res.status(409).json( new ResponseServer(`El personal ${staff.get('names')} ${staff.get('first_name')} ya se encuentra registrado`, false, staff))
+        if(staffWithIdCard){
+            const message = `El personal ${staffWithIdCard.get('names')} ${staffWithIdCard.get('first_name')} ya se encuentra registrado con el ${staffWithIdCard.get('type_id_card')} ${staffWithIdCard.get('id_card')}`;
+            return res.status(409).json( new ResponseServer( message, false))
         }
+        
+        // find with email
+        const staffWithEmail = await Staff.findOne({
+            where:{ email }
+        });
+        
+        if(staffWithEmail){
+            const message = `El personal ${staffWithEmail.get('names')} ${staffWithEmail.get('first_name')} ya se encuentra registrado con el email ${staffWithEmail.get('email')}`;
+            return res.status(409).json( new ResponseServer(message, false))
+        }
+
+
         next();
 
     } catch (e:any) {

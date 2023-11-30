@@ -37,7 +37,7 @@ exports.Staff = conexion_1.default.define('Staff', {
     },
     phone_number: {
         type: sequelize_1.DataTypes.STRING(9),
-        allowNull: false,
+        allowNull: true,
     },
     status: {
         type: sequelize_1.DataTypes.BOOLEAN,

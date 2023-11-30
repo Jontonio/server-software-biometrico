@@ -13,10 +13,6 @@ exports.Justification = conexion_1.default.define('Justification', {
         autoIncrement: true,
         primaryKey: true
     },
-    type_justification: {
-        type: sequelize_1.DataTypes.STRING(100),
-        allowNull: false
-    },
     date_justification: {
         type: sequelize_1.DataTypes.DATE,
         allowNull: false,
@@ -38,6 +34,14 @@ exports.Justification = conexion_1.default.define('Justification', {
     InstitutionStaffIdInstitutionStaff: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false
+    },
+    TypeJustificationIdTypeJustification: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
+    },
+    StatusJustificationIdStatusJustification: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
     }
 }, {
     // Other model options go here

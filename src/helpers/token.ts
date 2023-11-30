@@ -1,12 +1,11 @@
 
 import jwt from "jsonwebtoken";
-import { globalConfig } from "../config/config";
 
 
-export const generateToken = (payload: any ) => {
-    return jwt.sign({ data: payload }, globalConfig.SECRET_KET_TOKEN, { expiresIn:'12h'} );
+export const generateToken = (payload: any, secretKeyToken:string, expiresIn:string | number) => {
+    return jwt.sign({ data: payload }, secretKeyToken, { expiresIn:expiresIn } );
 }
 
-export const getPayloadToken = (token:string) => {
-    return jwt.verify(token as string, globalConfig.SECRET_KET_TOKEN );
+export const getPayloadToken = (token:string, secretKeyToken:string) => {
+    return jwt.verify(token as string, secretKeyToken );
 }

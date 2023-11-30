@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.justifyController = exports.userController = exports.workScheduleController = exports.roleController = exports.attendanceController = exports.shiftController = exports.fileController = exports.typeAttendanceController = exports.authController = exports.typeStaffController = exports.workSIEController = exports.institucionController = exports.biometricController = exports.staffController = exports.IEStaffController = exports.reportController = void 0;
+exports.searchController = exports.emailController = exports.justifyController = exports.userController = exports.workScheduleController = exports.roleController = exports.attendanceController = exports.shiftController = exports.fileController = exports.typeAttendanceController = exports.authController = exports.typeStaffController = exports.workSIEController = exports.institucionController = exports.biometricController = exports.staffController = exports.IEStaffController = exports.reportController = void 0;
 const typeAttendanceController = __importStar(require("./typeAttendance"));
 exports.typeAttendanceController = typeAttendanceController;
 const workScheduleController = __importStar(require("./workSchedule"));
@@ -56,4 +56,8 @@ const justifyController = __importStar(require("./justification"));
 exports.justifyController = justifyController;
 const shiftController = __importStar(require("./shift"));
 exports.shiftController = shiftController;
+const searchController = __importStar(require("./search"));
+exports.searchController = searchController;
+const emailController = __importStar(require("./email"));
+exports.emailController = emailController;
 //# sourceMappingURL=index.js.map

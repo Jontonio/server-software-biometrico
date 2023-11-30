@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.comparePassword = exports.passwordPatternValidation = exports.existIdUser = void 0;
+exports.comparePassword = exports.passwordPatternValidation = exports.verifyChangeEmailUser = exports.existIdUser = void 0;
 const models_1 = require("../models");
 const Response_1 = require("../class/Response");
 const passwordPattern = /^(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9#$%@!]*$/;
@@ -26,6 +26,23 @@ const existIdUser = (id_user) => __awaiter(void 0, void 0, void 0, function* () 
     return true;
 });
 exports.existIdUser = existIdUser;
+const verifyChangeEmailUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email } = req.body;
+    if (!email) {
+        return res.status(400).json(new Response_1.ResponseServer(`Es necesario el email del usuario`, false));
+    }
+    const user = yield models_1.User.findOne({
+        where: { email }
+    });
+    if (!user) {
+        return res.status(404).json(new Response_1.ResponseServer(`El email ${email} no se encuentra registrado`, false));
+    }
+    if (!user.get('status')) {
+        return res.status(401).json(new Response_1.ResponseServer(`El email ${email} no se encuentra registrado, comuniquese con el administrador del sistema`, false));
+    }
+    next();
+});
+exports.verifyChangeEmailUser = verifyChangeEmailUser;
 const passwordPatternValidation = (password) => {
     // match with ex with pattern password
     if (!password.match(passwordPattern)) {
@@ -37,7 +54,7 @@ exports.passwordPatternValidation = passwordPatternValidation;
 const comparePassword = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { newPassword, confirmPassword } = req.body;
     if (newPassword !== confirmPassword) {
-        return res.status(400).json(new Response_1.ResponseServer(`Las contraseñas nuevas no coinciden, verifique nuevamente`, false, null));
+        return res.status(400).json(new Response_1.ResponseServer(`Las contraseñas nuevas no coinciden, verifique nuevamente`, false));
     }
     next();
 });

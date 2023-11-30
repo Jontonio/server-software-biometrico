@@ -14,6 +14,8 @@ import * as staffController from "./staff";
 import * as userController from "./user";
 import * as justifyController from "./justification";
 import * as shiftController from "./shift";
+import * as searchController from "./search";
+import * as emailController from "./email";
 
 export{
     reportController,
@@ -31,6 +33,8 @@ export{
     roleController,
     workScheduleController,
     userController,
-    justifyController
+    justifyController,
+    emailController,
+    searchController
 }
 

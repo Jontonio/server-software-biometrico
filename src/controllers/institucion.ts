@@ -8,9 +8,14 @@ import { Shift } from "../models/Shift";
 export const getInstitutions = async (req:Request, res: Response)=> {
     try {
         const {  offset = 0, limit = 5 } = req.query;
-        // get list institutions  
-        const institutions = await Institution.findAll({
+
+        const institutions = await Institution.findAndCountAll({
+            distinct:true,
             where:{ status:true },
+            attributes:{ exclude:['updatedAt'] },
+            offset:Number(offset),
+            limit:Number(limit),
+            order:[['createdAt','DESC']],
             include:[
                 {
                     model: InstitutionShift,
@@ -22,14 +27,10 @@ export const getInstitutions = async (req:Request, res: Response)=> {
                     ],
                     order:[[InstitutionShift, 'createdAt','DESC']],
                 },
-            ],
-            attributes:{ exclude:['updatedAt'] },
-            offset:Number(offset),
-            limit:Number(limit),
-            order:[['createdAt','DESC']],
+            ]
         });
-        // return response message
-        return res.status(200).json( new ResponseServer('Lista de instituciones', true, institutions, institutions.length ))
+
+        return res.status(200).json( new ResponseServer('Lista de instituciones', true, institutions ))
 
     } catch (e) {
         console.error(e);
@@ -102,15 +103,15 @@ export const updateInstitution = async (req:Request, res: Response) => {
         // update institution
         const respInstitution = await institution!.set( body ).save();
 
-        const institutionShift = await Institution.findOne({
-            where:{ modular_code },
-            include:[
-              {
-                model:InstitutionShift,
-                where:{ ShiftIdShift:body.shift }
-              }
-            ]
-        });
+        // const institutionShift = await Institution.findOne({
+        //     where:{ modular_code },
+        //     include:[
+        //       {
+        //         model:InstitutionShift,
+        //         where:{ ShiftIdShift:body.shift }
+        //       }
+        //     ]
+        // });
         //TODO:pendiente actualización de datos
         // if(!institutionShift){
         //     const id_institution_shift = body.shift;
@@ -205,16 +206,16 @@ export const getOneResourceInstitution = async ( req:Request, res:Response ) => 
         // get modular code from params
         const { modular_code } = req.params;
         // filter from specific modular code
-        const resp = institutionData.filter( (institucion:any) => institucion.modular_code == modular_code );
+        const institution = institutionData.find( (institucion:any) => institucion.modular_code == modular_code );
         // verify resp size 
-        if( resp.length == 0){
+        if(!institution){
             // return response message
-            return res.status(200).json( new ResponseServer(`No se encontro a la institución con código modular ${modular_code}`, false, resp?{ ...resp }:null))
+            return res.status(404).json( new ResponseServer(`No se encontro ninguna institución con código modular ${modular_code}`, false))
         }
         // return response message
-        return res.status(200).json( new ResponseServer(`Institución con código modular ${modular_code}`, true, { ...resp[0] }))
+        return res.status(200).json( new ResponseServer(`Institución con código modular ${modular_code}`, true, { ...institution }))
     } catch (e) {
         console.error(e);
-        return res.status(500).json( new ResponseServer('Ocurrio un error al obtener insituciones', false, null))
+        return res.status(500).json( new ResponseServer('Ocurrio un error al obtener insituciones', false))
     }
 }

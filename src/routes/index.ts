@@ -15,4 +15,5 @@ export { routerReport } from './report.route';
 export { routerFile } from './file.route';
 export { routerJustification } from './justification.route';
 export { routerShift } from './shift.route';
-
+export { routerSearch } from './search.route'
+export { routerEmail } from './email.route'

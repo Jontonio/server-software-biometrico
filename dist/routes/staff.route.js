@@ -10,7 +10,7 @@ const staff_1 = require("../controllers/staff");
 const limiter_middleware_1 = require("../middlewares/limiter.middleware");
 const middlewares_2 = require("../middlewares/");
 exports.routerStaff = (0, express_1.Router)();
-exports.routerStaff.post(`/register-staff`, middlewares_1.validateJWT, (0, staff_validation_1.staffValidator)(), helpers_1.verifyError, middlewares_2.typeStaffMiddleware.typeIdCardValidator, helpers_1.verifyError, middlewares_2.institutionStaffMiddleware.existStaffAtTheInstitution, helpers_1.verifyError, controllers_1.staffController.registerStaff);
+exports.routerStaff.post(`/register-new-staff`, middlewares_1.validateJWT, middlewares_1.haveRole, (0, staff_validation_1.staffValidator)(), helpers_1.verifyError, middlewares_2.typeStaffMiddleware.typeIdCardValidator, helpers_1.verifyError, middlewares_2.institutionStaffMiddleware.existStaffAtTheInstitution, helpers_1.verifyError, middlewares_1.staffMiddleware.existStaff, controllers_1.staffController.registerStaff);
 exports.routerStaff.patch(`/update-staff/:id_card`, middlewares_1.validateJWT, (0, staff_validation_1.idCardValidator)(), helpers_1.verifyError, controllers_1.staffController.updateStaff);
 exports.routerStaff.post(`/search-api-id-card`, middlewares_1.validateJWT, (0, staff_validation_1.idCardValidatorAPI)(), helpers_1.verifyError, controllers_1.staffController.searchDNIAPI);
 exports.routerStaff.get(`/get-list-staff`, middlewares_1.validateJWT, (0, helpers_1.modularCodeValidator)(), helpers_1.verifyError, controllers_1.staffController.getListStaff);

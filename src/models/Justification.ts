@@ -9,10 +9,6 @@ export const Justification = connectDB.define('Justification', {
     autoIncrement: true,
     primaryKey: true
   },
-  type_justification: {
-    type: DataTypes.STRING(100),
-    allowNull: false
-  },
   date_justification: {
     type: DataTypes.DATE,
     allowNull: false,
@@ -34,6 +30,14 @@ export const Justification = connectDB.define('Justification', {
   InstitutionStaffIdInstitutionStaff:{
     type: DataTypes.INTEGER,
     allowNull: false
+  },
+  TypeJustificationIdTypeJustification:{
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  StatusJustificationIdStatusJustification:{
+    type: DataTypes.INTEGER,
+    allowNull: false,
   }
 }, {
   // Other model options go here

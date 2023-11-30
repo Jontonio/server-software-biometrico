@@ -56,8 +56,6 @@ const staffValidator = () => {
             .bail()
             .isEmail()
             .withMessage('El email del personal debe ser válido')
-            .bail()
-            .custom((email) => (0, exports.existEmail)(email, false))
             .bail(),
         (0, express_validator_1.body)('phone_numer').optional()
             .isLength({ max: 9 })
@@ -108,7 +106,7 @@ const idCardValidator = () => {
             .isLength({ min: 8, max: 20 })
             .withMessage('El documento de identidad debe ser almenos de 8 dígitos y máximo de 20 dígitos')
             .bail()
-            .custom((id_card) => (0, exports.existStaff)(id_card, false))
+        // .custom((id_card) => existStaff(id_card, false))
     ];
 };
 exports.idCardValidator = idCardValidator;

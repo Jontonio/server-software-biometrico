@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyExistIdUser = exports.authValidatorChangePassword = exports.authValidator = void 0;
+exports.verifyExistIdUser = exports.validateChangePassword = exports.authValidatorChangePassword = exports.htmlValidator = exports.emailValidator = exports.authValidator = void 0;
 const express_validator_1 = require("express-validator");
 const models_1 = require("../models");
 const patterPassword = /^(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9#$%@!]*$/;
@@ -27,6 +27,26 @@ const authValidator = () => {
     ];
 };
 exports.authValidator = authValidator;
+const emailValidator = () => {
+    return [
+        (0, express_validator_1.body)('email').not()
+            .isEmpty()
+            .withMessage('El email es un campo requerido')
+            .bail()
+            .isEmail()
+            .withMessage("El email digitado es inválido")
+    ];
+};
+exports.emailValidator = emailValidator;
+const htmlValidator = () => {
+    return [
+        (0, express_validator_1.body)('html').not()
+            .isEmpty()
+            .withMessage('El campo texto a enviar es un campo requerido')
+            .bail()
+    ];
+};
+exports.htmlValidator = htmlValidator;
 const authValidatorChangePassword = () => {
     return [
         (0, express_validator_1.body)('currentPassword').not()
@@ -45,6 +65,24 @@ const authValidatorChangePassword = () => {
     ];
 };
 exports.authValidatorChangePassword = authValidatorChangePassword;
+const validateChangePassword = () => {
+    return [
+        (0, express_validator_1.body)('confirmPassword').not()
+            .isEmpty()
+            .withMessage('La contraseña de confirmación es requerida')
+            .bail()
+            .custom((confirmPassword) => validatePassword(confirmPassword)),
+        (0, express_validator_1.body)('newPassword').not()
+            .isEmpty()
+            .withMessage('La contraseña nueva es requerida')
+            .bail()
+            .custom((newPassword) => validatePassword(newPassword)),
+        (0, express_validator_1.body)('credentials').not()
+            .isEmpty()
+            .withMessage('Las credenciales de verificación es requerida')
+    ];
+};
+exports.validateChangePassword = validateChangePassword;
 const verifyExistIdUser = () => {
     return [
         (0, express_validator_1.check)('id_user').not()

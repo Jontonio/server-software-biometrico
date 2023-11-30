@@ -52,7 +52,7 @@ const updateStaff = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         // update staff
         const resUpdateStaff = yield staff.set(body).save();
         // return response message 
-        return res.status(201).json(new Response_1.ResponseServer('Personal actualizado correctamente', true, resUpdateStaff));
+        return res.status(201).json(new Response_1.ResponseServer('Datos personales actualizados correctamente', true, resUpdateStaff));
     }
     catch (e) {
         console.error(e);
@@ -68,8 +68,13 @@ const getOneStaff = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const staff = yield models_1.Staff.findOne({
             where: { id_card }
         });
+        if (!staff) {
+            const message = `No se encontraron datos para el documento ${id_card}`;
+            return res.status(200).json(new Response_1.ResponseServer(message, true, staff));
+        }
         // return response menssage
-        return res.status(201).json(new Response_1.ResponseServer(`Personal con documento ${id_card} obtenido`, true, staff));
+        const message = `Datos obtenidos de ${staff === null || staff === void 0 ? void 0 : staff.get('names')} ${staff === null || staff === void 0 ? void 0 : staff.get('first_name')}`;
+        return res.status(200).json(new Response_1.ResponseServer(message, true, staff));
     }
     catch (e) {
         console.error(e);

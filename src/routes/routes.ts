@@ -1,4 +1,5 @@
 
+import { Router } from 'express';
 import { 
     routerInstitution,
     routerUser,
@@ -15,9 +16,11 @@ import {
     routerFile,
     routerJustification,
     routerShift,
+    routerSearch,
+    routerEmail,
     routerBiometric } from '../routes';
 
-const routes:any[] = [
+const routes:Router[] = [
     routerInstitution,
     routerUser,
     routerAuth,
@@ -33,6 +36,8 @@ const routes:any[] = [
     routerReport,
     routerFile,
     routerShift,
+    routerSearch,
+    routerEmail,
     routerJustification
 ] 
 

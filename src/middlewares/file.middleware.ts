@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ResponseServer } from '../class/Response';
 import { Payload } from '../class/Payload';
 import { getPayloadToken } from '../helpers';
+import { globalConfig } from '../config/config';
 
 const fileSizeMB = 5; //file size in MB
 const fileSize = 1000000*fileSizeMB; //file size in bytes
@@ -64,7 +65,7 @@ export const validateAuthorization =  (req:Request, res:Response, next:NextFunct
             return res.status(401).json( new ResponseServer(`En necesario la autorización para mostrar el archivo`, false))
         }
         // validate token with jwt
-        getPayloadToken(String(authorization));
+        getPayloadToken(String(authorization), globalConfig.SECRET_KEY_TOKEN_SYSTEM);
 
         next();
 

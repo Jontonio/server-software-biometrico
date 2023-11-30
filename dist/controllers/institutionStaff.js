@@ -9,19 +9,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteStaffAtTheInstitution = exports.getOneStaffAtTheInstitution = exports.getScheduleStaffAtTheInstitution = exports.registerStaffAtTheInstitution = void 0;
+exports.deleteStaffAtTheInstitution = exports.getOneStaffAtTheInstitution = exports.getScheduleStaffAtTheInstitution = exports.updateStaffAtTheInstitution = exports.registerStaffAtTheInstitution = void 0;
 const Response_1 = require("../class/Response");
 const models_1 = require("../models");
 const registerStaffAtTheInstitution = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // get data grom body
         const { body } = req;
-        // get data from body
-        const { InstitutionModularCode } = body;
-        // register new Staff at the Institution
+        // // register new Staff at the Institution
         const staffAtTheInstitution = yield models_1.InstitutionStaff.create(body);
-        // return response message
-        return res.status(201).json(new Response_1.ResponseServer(`Personal registrada correctamente en la institución ${InstitutionModularCode}`, true, staffAtTheInstitution));
+        // // return response message
+        return res.status(201).json(new Response_1.ResponseServer(`Personal registrado correctamente en la institución`, true, staffAtTheInstitution));
     }
     catch (e) {
         console.error(e);
@@ -29,6 +27,24 @@ const registerStaffAtTheInstitution = (req, res) => __awaiter(void 0, void 0, vo
     }
 });
 exports.registerStaffAtTheInstitution = registerStaffAtTheInstitution;
+const updateStaffAtTheInstitution = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // get data grom body
+        const { body } = req;
+        const { id_institution_staff } = req.params;
+        const IEStaff = yield models_1.InstitutionStaff.findOne({
+            where: { id_institution_staff }
+        });
+        const resUpdateIEStaff = yield (IEStaff === null || IEStaff === void 0 ? void 0 : IEStaff.set(body).save());
+        // // return response message
+        return res.status(200).json(new Response_1.ResponseServer(`Información laboral del personal actualizada correctamente`, true, resUpdateIEStaff));
+    }
+    catch (e) {
+        console.error(e);
+        return res.status(500).json(new Response_1.ResponseServer('Ocurrio un error al actualizar personal en la institución', false));
+    }
+});
+exports.updateStaffAtTheInstitution = updateStaffAtTheInstitution;
 const getScheduleStaffAtTheInstitution = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // get data grom body

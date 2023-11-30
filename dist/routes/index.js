@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.routerShift = exports.routerJustification = exports.routerFile = exports.routerReport = exports.routerBiometric = exports.routerWorkSchuduleIE = exports.routerWorkSchudule = exports.routerInstitutionStaff = exports.routerTypeAttendance = exports.routerAttendance = exports.routerTypeStaff = exports.routerStaff = exports.routerRoles = exports.routerAuth = exports.routerUser = exports.routerInstitution = void 0;
+exports.routerEmail = exports.routerSearch = exports.routerShift = exports.routerJustification = exports.routerFile = exports.routerReport = exports.routerBiometric = exports.routerWorkSchuduleIE = exports.routerWorkSchudule = exports.routerInstitutionStaff = exports.routerTypeAttendance = exports.routerAttendance = exports.routerTypeStaff = exports.routerStaff = exports.routerRoles = exports.routerAuth = exports.routerUser = exports.routerInstitution = void 0;
 var institucion_route_1 = require("./institucion.route");
 Object.defineProperty(exports, "routerInstitution", { enumerable: true, get: function () { return institucion_route_1.routerInstitution; } });
 var user_route_1 = require("./user.route");
@@ -33,4 +33,8 @@ var justification_route_1 = require("./justification.route");
 Object.defineProperty(exports, "routerJustification", { enumerable: true, get: function () { return justification_route_1.routerJustification; } });
 var shift_route_1 = require("./shift.route");
 Object.defineProperty(exports, "routerShift", { enumerable: true, get: function () { return shift_route_1.routerShift; } });
+var search_route_1 = require("./search.route");
+Object.defineProperty(exports, "routerSearch", { enumerable: true, get: function () { return search_route_1.routerSearch; } });
+var email_route_1 = require("./email.route");
+Object.defineProperty(exports, "routerEmail", { enumerable: true, get: function () { return email_route_1.routerEmail; } });
 //# sourceMappingURL=index.js.map

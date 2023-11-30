@@ -8,6 +8,7 @@ const multer_1 = __importDefault(require("multer"));
 const uuid_1 = require("uuid");
 const Response_1 = require("../class/Response");
 const helpers_1 = require("../helpers");
+const config_1 = require("../config/config");
 const fileSizeMB = 5; //file size in MB
 const fileSize = 1000000 * fileSizeMB; //file size in bytes
 const storage = multer_1.default.diskStorage({
@@ -53,7 +54,7 @@ const validateAuthorization = (req, res, next) => {
             return res.status(401).json(new Response_1.ResponseServer(`En necesario la autorización para mostrar el archivo`, false));
         }
         // validate token with jwt
-        (0, helpers_1.getPayloadToken)(String(authorization));
+        (0, helpers_1.getPayloadToken)(String(authorization), config_1.globalConfig.SECRET_KEY_TOKEN_SYSTEM);
         next();
     }
     catch (e) {

@@ -15,6 +15,7 @@ export const registerStaff = async (req:Request, res: Response)=> {
         const { id_card, working_hours, staff_condition, InstitutionShift, TypeStaff } = body;
         // register data
         const staff = await Staff.create( body );
+
         const institutionStaff =  await InstitutionStaff.create({
             InstitutionShiftIdInstitutionShift:InstitutionShift,
             StaffIdCard:id_card,
@@ -22,9 +23,10 @@ export const registerStaff = async (req:Request, res: Response)=> {
             working_hours,
             staff_condition
         })
+
         return res.status(201).json( new ResponseServer('Personal registrado correctamente', true, institutionStaff))
         
-    } catch (e) {
+    } catch (e:any) {
         console.error(e);
         return res.status(500).json( new ResponseServer('Ocurrio un error al registrar un personal', false, null))
     }
@@ -40,7 +42,7 @@ export const updateStaff = async (req:Request, res: Response)=> {
         // update staff
         const resUpdateStaff = await staff!.set( body ).save();
         // return response message 
-        return res.status(201).json( new ResponseServer('Personal actualizado correctamente', true, resUpdateStaff ))
+        return res.status(201).json( new ResponseServer('Datos personales actualizados correctamente', true, resUpdateStaff ))
 
     } catch (e:any) {
         console.error(e);
@@ -56,8 +58,15 @@ export const getOneStaff = async (req:Request, res: Response)=> {
         const staff = await Staff.findOne({
             where:{ id_card }
         })
+
+        if(!staff){
+            const message = `No se encontraron datos para el documento ${id_card}`
+            return res.status(200).json( new ResponseServer( message, true, staff ))
+        }
+        
         // return response menssage
-        return res.status(201).json( new ResponseServer(`Personal con documento ${ id_card } obtenido`, true, staff ))
+        const message = `Datos obtenidos de ${staff?.get('names')} ${staff?.get('first_name')}`
+        return res.status(200).json( new ResponseServer( message, true, staff ))
 
     } catch (e) {
         console.error(e);

@@ -6,16 +6,35 @@ export const registerStaffAtTheInstitution = async (req:Request, res: Response)=
     try {
         // get data grom body
         const { body } = req;
-        // get data from body
-        const { InstitutionModularCode } = body;
-        // register new Staff at the Institution
+        // // register new Staff at the Institution
         const staffAtTheInstitution = await InstitutionStaff.create( body );
-        // return response message
-        return res.status(201).json( new ResponseServer(`Personal registrada correctamente en la institución ${InstitutionModularCode}`, true, staffAtTheInstitution))
+        // // return response message
+        return res.status(201).json( new ResponseServer(`Personal registrado correctamente en la institución`, true, staffAtTheInstitution))
         
     } catch (e) {
         console.error(e);
         return res.status(500).json( new ResponseServer('Ocurrio un error al registrar personal en la institución', false, null))
+    }
+}
+
+export const updateStaffAtTheInstitution = async (req:Request, res: Response)=> {
+    try {
+        // get data grom body
+        const { body } = req;
+
+        const { id_institution_staff } = req.params;
+        
+        const IEStaff = await InstitutionStaff.findOne({
+            where:{ id_institution_staff }
+        })
+
+        const resUpdateIEStaff = await IEStaff?.set( body ).save();
+        // // return response message
+        return res.status(200).json( new ResponseServer(`Información laboral del personal actualizada correctamente`, true, resUpdateIEStaff))
+        
+    } catch (e) {
+        console.error(e);
+        return res.status(500).json( new ResponseServer('Ocurrio un error al actualizar personal en la institución', false))
     }
 }
 

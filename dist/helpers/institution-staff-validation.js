@@ -9,26 +9,69 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.existInstitutionStaff = exports.checkIdInstitutionStaff = exports.institutionStaffValidator = void 0;
+exports.existInstitutionStaff = exports.checkIdInstitutionStaff = exports.institutionStaffUpdateValidator = exports.institutionStaffValidator = void 0;
 const express_validator_1 = require("express-validator");
-const institution_validation_1 = require("./institution-validation");
 const staff_validation_1 = require("./staff-validation");
 const InstitutionStaff_1 = require("../models/InstitutionStaff");
+const institution_shift_validation_copy_1 = require("./institution-shift-validation copy");
+const type_staff_validation_1 = require("./type-staff-validation");
 const institutionStaffValidator = () => {
     return [
-        (0, express_validator_1.body)('InstitutionModularCode').not()
+        (0, express_validator_1.body)('staff_condition').not()
             .isEmpty()
-            .withMessage('El código modular de la institución es requerido')
+            .withMessage('La condición del personal es requerido')
+            .bail(),
+        (0, express_validator_1.body)('working_hours').not()
+            .isEmpty()
+            .withMessage('La jornada laboral del personal es requerido')
             .bail()
-            .custom((InstitutionModularCode) => (0, institution_validation_1.existInstitution)(InstitutionModularCode, false)),
+            .isNumeric()
+            .withMessage('La joranda laboral del personal deber ser númerico')
+            .bail(),
+        (0, express_validator_1.body)('InstitutionShiftIdInstitutionShift').not()
+            .isEmpty()
+            .withMessage('El id de la institución en turno es requerido')
+            .bail()
+            .custom((InstitutionShiftIdInstitutionShift) => (0, institution_shift_validation_copy_1.existInstitutionIdShift)(InstitutionShiftIdInstitutionShift))
+            .bail(),
         (0, express_validator_1.body)('StaffIdCard').not()
             .isEmpty()
-            .withMessage('El documento de identidad del personal es requerido')
+            .withMessage('El documento de identidad es requerido')
             .bail()
-            .custom((StaffIdCard) => (0, staff_validation_1.existStaff)(StaffIdCard, false))
+            .isLength({ min: 8, max: 20 })
+            .withMessage('El documento de identidad debe ser almenos de 8 dígitos')
+            .custom((StaffIdCard) => (0, staff_validation_1.existStaff)(StaffIdCard, false)),
+        (0, express_validator_1.body)('TypeStaffIdTypeStaff').not()
+            .isEmpty()
+            .withMessage('El id del tipo de personal es requerido')
+            .bail()
+            .custom((TypeStaff) => (0, type_staff_validation_1.existIdTypeStaff)(TypeStaff))
+            .bail(),
     ];
 };
 exports.institutionStaffValidator = institutionStaffValidator;
+const institutionStaffUpdateValidator = () => {
+    return [
+        (0, express_validator_1.body)('staff_condition').not()
+            .isEmpty()
+            .withMessage('La condición del personal es requerido')
+            .bail(),
+        (0, express_validator_1.body)('working_hours').not()
+            .isEmpty()
+            .withMessage('La jornada laboral del personal es requerido')
+            .bail()
+            .isNumeric()
+            .withMessage('La joranda laboral del personal deber ser númerico')
+            .bail(),
+        (0, express_validator_1.body)('TypeStaffIdTypeStaff').not()
+            .isEmpty()
+            .withMessage('El id del tipo de personal es requerido')
+            .bail()
+            .custom((TypeStaff) => (0, type_staff_validation_1.existIdTypeStaff)(TypeStaff))
+            .bail(),
+    ];
+};
+exports.institutionStaffUpdateValidator = institutionStaffUpdateValidator;
 const checkIdInstitutionStaff = () => {
     return [
         (0, express_validator_1.check)('id_institution_staff').not()

@@ -32,7 +32,7 @@ export const Staff = connectDB.define('Staff', {
   },
   phone_number: {
     type: DataTypes.STRING(9),
-    allowNull: false,
+    allowNull: true,
   },
   status:{
     type: DataTypes.BOOLEAN,
