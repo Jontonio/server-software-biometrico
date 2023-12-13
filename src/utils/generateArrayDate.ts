@@ -1,10 +1,20 @@
 import moment from 'moment';
 moment.locale('es');
 
-interface DayInfo {
+export interface DayInfo {
   startDay: string;
   dayNumber: number;
+  numberStartDay?:number;
 }
+export const days = [
+  { name: 'lunes', code: 2 },
+  { name: 'martes', code: 3 },
+  { name: 'miércoles', code: 4 },
+  { name: 'jueves', code: 5 },
+  { name: 'viernes', code: 6 },
+  { name: 'sábado', code: 7 },
+  { name: 'domingo', code: 1 }
+];
 
 export const getDaysToMonth = (anio: number, mes: number): DayInfo[] => {
 
@@ -22,6 +32,7 @@ export const getDaysToMonth = (anio: number, mes: number): DayInfo[] => {
       const dayInfo: DayInfo = {
         startDay:startDay=='miércoles'?startDay.slice(0,2).toUpperCase():startDay.slice(0,1).toUpperCase(),
         dayNumber: dia,
+        numberStartDay: days.find(day => day.name === startDay)?.code || 0,
       };
       diasArray.push(dayInfo);
     }

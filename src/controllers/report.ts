@@ -5,9 +5,9 @@ import connectDB from "../db/conexion";
 import { QueryTypes, Sequelize } from "sequelize";
 import { getDetailAttendances, queryInfoOneTypeJustification } from "../utils/query";
 import { InstitutionShift } from "../models/InstitutionShift";
-import { Institution, InstitutionStaff, Staff, TypeStaff } from "../models";
+import { Institution, InstitutionStaff, Staff, TypeStaff, WorkScheduleInstitution } from "../models";
 import { Shift } from "../models/Shift";
-import { getDaysToMonth, transformArrayJustifications } from "../utils/generateArrayDate";
+import { DayInfo, getDaysToMonth, transformArrayJustifications } from "../utils/generateArrayDate";
 import moment from "moment";
 import { TypeJustification } from "../models/TypeJustification";
 
@@ -56,29 +56,6 @@ export const counterInformation = async (req:Request, res: Response)=> {
         return res.status(500).json( new ResponseServer('Ocurrio un error al obtener información de counter report', false, null))
     }
 }
-export const getReporteDetallado = async (req:Request, res: Response)=> {
-    try {
-
-        const { year, month, id_institution_shift} = req.body;
-
-        const resultado = await connectDB.query('CALL reporteDetallado(:anio, :mes, :id_institution_shift)', {
-            replacements: {
-              anio: year,
-              mes: month,
-              id_institution_shift: id_institution_shift
-            },
-            type: QueryTypes.RAW,
-        });
-      
-        // return response message
-        return res.status(200).json( new ResponseServer(`Reporte detallado del mes ${month} del año ${year}`, true, resultado))
-        
-    } catch (e) {
-        console.error(e);
-        return res.status(500).json( new ResponseServer('Ocurrio un error al obtener reporte detallado', false, null))
-    }
-}
-
 export const getInfoJustifications = async (req:Request, res:Response) => {
     try {
         const { year } = req.body;
@@ -116,6 +93,10 @@ export const getDetailedReport = async (req:Request, res: Response)=> {
                         {
                             model:TypeStaff,
                             attributes:{ exclude:['createdAt','updatedAt'] }
+                        },
+                        {
+                            model:WorkScheduleInstitution,
+                            attributes:{ exclude:['createdAt','updatedAt'] }
                         }
                     ],
                     attributes:{ exclude:['createdAt','updatedAt'] },
@@ -140,7 +121,7 @@ export const getDetailedReport = async (req:Request, res: Response)=> {
         const listStaffAtTheInstition = institutionShift?.get('InstitutionStaffs') as any[];
         const listStaffReports = [];
         const daysToMonth = getDaysToMonth(year, month);
-
+        
         for(const staff of listStaffAtTheInstition){
 
             const id_institution_staff = staff?.get('id_institution_staff');
@@ -148,11 +129,11 @@ export const getDetailedReport = async (req:Request, res: Response)=> {
             const reportConditionStaff = staff?.get('staff_condition');
             const reportWorkingHoursStaff = staff?.get('working_hours');
             const reportTypeStaff = staff?.get('TypeStaff');
-
+            const WorkScheduleInstitutions = staff?.get('WorkScheduleInstitutions');
             const resAttendances = await getDetailAttendances(idInstitutionShift, id_institution_staff, year, month);
             const daysToMonthAttendances = [...daysToMonth];
 
-            const reportsAttendances = daysToMonthAttendances.map((day:any) => {
+            const reportsAttendances = daysToMonthAttendances.map((day:DayInfo) => {
 
                 const attendance:any = resAttendances.find((t:any) => t.day === day.dayNumber);
 
@@ -163,9 +144,10 @@ export const getDetailedReport = async (req:Request, res: Response)=> {
                             date_time: attendance.date_time,
                     };
                 } else {
+
                     return {
                             ...day,
-                            statusAttendance: null,
+                            statusAttendance: WorkScheduleInstitutions.find((val:any) => val.day==day.numberStartDay)?'F':'_',
                             date_time: null,
                     };
                 }

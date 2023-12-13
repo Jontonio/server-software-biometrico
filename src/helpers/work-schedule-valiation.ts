@@ -7,12 +7,12 @@ export const workScheduleValidator = () => {
               .isEmpty()
               .withMessage('La hora de estrada de trabajo es requerido formato (HH:MM:SS)')
               .bail()
-              .custom( (arrival_time) => validateTime(arrival_time) ),
+              .custom( (arrival_time:any) => validateTime(arrival_time) ),
         body('departure_time').not()
               .isEmpty()
               .withMessage('La hora de salida de trabajo es requerido formato (HH:MM:SS)')
               .bail()
-              .custom( (departure_time) => validateTime(departure_time))
+              .custom( (departure_time:any) => validateTime(departure_time))
     ]
 }
 
