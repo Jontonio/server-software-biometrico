@@ -27,6 +27,14 @@ export const Justification = connectDB.define('Justification', {
     allowNull: false,
     defaultValue: true
   },
+  hourStartPer:{
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  hourFinishPer:{
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
   InstitutionStaffIdInstitutionStaff:{
     type: DataTypes.INTEGER,
     allowNull: false

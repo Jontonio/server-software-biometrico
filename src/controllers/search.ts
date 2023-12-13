@@ -1,14 +1,17 @@
 import {Request, Response } from "express";
 import { ResponseServer } from "../class/Response";
-import { Institution, InstitutionStaff, Staff, TypeStaff, WorkScheduleInstitution } from "../models";
+import { Institution, InstitutionStaff, Justification, Staff, TypeStaff, WorkScheduleInstitution } from "../models";
 import { Op } from 'sequelize';
 import { InstitutionShift } from "../models/InstitutionShift";
 import { Shift } from "../models/Shift";
+import { TypeJustification } from "../models/TypeJustification";
+import { StatusJustification } from "../models/StatusJustification";
 
 const permitionsTables = [
     'institution',
     'staff-at-the-institution',
-    'user'
+    'justification',
+    'user',
 ]
 
 export const searchInformation = async ( req:Request, res:Response) => {
@@ -22,10 +25,13 @@ export const searchInformation = async ( req:Request, res:Response) => {
         
         switch (table) {
             case 'institution':
-                await searchInstitution( term, req, res)
+                await searchInstitution(term, req, res)
                 break;
             case 'staff-at-the-institution':
-                await searchStaffAtTheInstitution( term, req, res)
+                await searchStaffAtTheInstitution(term, req, res)
+                break;
+            case 'justification':
+                await searchJustification(term, req, res)
                 break;
             default:
                 break;
@@ -33,7 +39,7 @@ export const searchInformation = async ( req:Request, res:Response) => {
 
     } catch (e) {
         console.error(e);
-        return res.status(500).json( new ResponseServer('Ocurrio un error al subir archivo', false))
+        return res.status(500).json( new ResponseServer('Ocurrio un error al realizar la búsqueda', false))
     }
 }
 
@@ -125,4 +131,75 @@ const searchStaffAtTheInstitution = async (term:string, req:Request, res:Respons
     // }
 
     return res.status(200).json( new ResponseServer(`Resultados de búsqueda ${term}`, true, institutionWithStaff ))
+}
+
+const searchJustification = async (term:string, req:Request, res:Response) => {
+    try {
+        console.log(term)
+        const {  offset = 0, limit = 5, id_status_justification = 1 } = req.query;
+        
+        const justifications = await Justification.findAndCountAll({
+            where: {
+                StatusJustificationIdStatusJustification: id_status_justification,
+            },
+            include: [
+                {
+                    model: TypeJustification
+                },
+                {
+                    model: StatusJustification
+                },
+                {
+                    model: InstitutionStaff,
+                    where: {
+                        StaffIdCard: {
+                            [Op.not]: null
+                        }
+                    },
+                    include: [
+                        {
+                            model: Staff,
+                            attributes: { exclude: ['createdAt', 'updatedAt'] },
+                            where: {
+                                [Op.or]: [
+                                    { 
+                                        names: { [Op.substring]: term }
+                                    }, 
+                                    {  
+                                        id_card: { [Op.substring]: term }
+                                    }
+                                ],
+                                [Op.and]:[{ status:true }]
+                            },
+                            required:true
+                        },
+                        {
+                            model: TypeStaff,
+                            attributes: { exclude: ['createdAt', 'updatedAt'] },
+                        },
+                        {
+                            model: InstitutionShift,
+                            include: [
+                                {
+                                    model: Institution
+                                }
+                            ],
+                            attributes: { exclude: ['createdAt', 'updatedAt'] }
+                        }
+                    ],
+                    attributes: { exclude: ['createdAt', 'updatedAt'] }
+                }
+            ],
+            distinct:true,
+            offset: Number(offset),
+            limit: Number(limit)
+        });
+        
+    
+        return res.status(200).json( new ResponseServer(`Resultados de búsqueda ${term}`, true, justifications ))
+        
+    } catch (e) {
+        console.log(e)  
+    }
+
 }

@@ -36,6 +36,12 @@ const justificationValidator = () => {
             .withMessage(`El archivo de justificación es requerido`)
             .bail()
             .custom(exports.checkURLFile),
+        (0, express_validator_1.body)('hourStartPer').optional()
+            .isISO8601()
+            .withMessage("El campo hora de inicio de permiso debe estar en formato ISO 8601"),
+        (0, express_validator_1.body)('hourFinishPer').optional()
+            .isISO8601()
+            .withMessage("El campo hora de fin de permiso debe estar en formato ISO 8601"),
         (0, express_validator_1.body)('InstitutionStaffIdInstitutionStaff').not()
             .isEmpty()
             .withMessage(`El id del personal en la institución es requerido`)

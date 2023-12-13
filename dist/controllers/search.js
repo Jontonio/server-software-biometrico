@@ -15,10 +15,13 @@ const models_1 = require("../models");
 const sequelize_1 = require("sequelize");
 const InstitutionShift_1 = require("../models/InstitutionShift");
 const Shift_1 = require("../models/Shift");
+const TypeJustification_1 = require("../models/TypeJustification");
+const StatusJustification_1 = require("../models/StatusJustification");
 const permitionsTables = [
     'institution',
     'staff-at-the-institution',
-    'user'
+    'justification',
+    'user',
 ];
 const searchInformation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -33,13 +36,16 @@ const searchInformation = (req, res) => __awaiter(void 0, void 0, void 0, functi
             case 'staff-at-the-institution':
                 yield searchStaffAtTheInstitution(term, req, res);
                 break;
+            case 'justification':
+                yield searchJustification(term, req, res);
+                break;
             default:
                 break;
         }
     }
     catch (e) {
         console.error(e);
-        return res.status(500).json(new Response_1.ResponseServer('Ocurrio un error al subir archivo', false));
+        return res.status(500).json(new Response_1.ResponseServer('Ocurrio un error al realizar la búsqueda', false));
     }
 });
 exports.searchInformation = searchInformation;
@@ -122,5 +128,71 @@ const searchStaffAtTheInstitution = (term, req, res) => __awaiter(void 0, void 0
     //     return res.status(404).json( new ResponseServer(`No se encontraron resultados para ${term}`, false, institutionWithStaff ))
     // }
     return res.status(200).json(new Response_1.ResponseServer(`Resultados de búsqueda ${term}`, true, institutionWithStaff));
+});
+const searchJustification = (term, req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        console.log(term);
+        const { offset = 0, limit = 5, id_status_justification = 1 } = req.query;
+        const justifications = yield models_1.Justification.findAndCountAll({
+            where: {
+                StatusJustificationIdStatusJustification: id_status_justification,
+            },
+            include: [
+                {
+                    model: TypeJustification_1.TypeJustification
+                },
+                {
+                    model: StatusJustification_1.StatusJustification
+                },
+                {
+                    model: models_1.InstitutionStaff,
+                    where: {
+                        StaffIdCard: {
+                            [sequelize_1.Op.not]: null
+                        }
+                    },
+                    include: [
+                        {
+                            model: models_1.Staff,
+                            attributes: { exclude: ['createdAt', 'updatedAt'] },
+                            where: {
+                                [sequelize_1.Op.or]: [
+                                    {
+                                        names: { [sequelize_1.Op.substring]: term }
+                                    },
+                                    {
+                                        id_card: { [sequelize_1.Op.substring]: term }
+                                    }
+                                ],
+                                [sequelize_1.Op.and]: [{ status: true }]
+                            },
+                            required: true
+                        },
+                        {
+                            model: models_1.TypeStaff,
+                            attributes: { exclude: ['createdAt', 'updatedAt'] },
+                        },
+                        {
+                            model: InstitutionShift_1.InstitutionShift,
+                            include: [
+                                {
+                                    model: models_1.Institution
+                                }
+                            ],
+                            attributes: { exclude: ['createdAt', 'updatedAt'] }
+                        }
+                    ],
+                    attributes: { exclude: ['createdAt', 'updatedAt'] }
+                }
+            ],
+            distinct: true,
+            offset: Number(offset),
+            limit: Number(limit)
+        });
+        return res.status(200).json(new Response_1.ResponseServer(`Resultados de búsqueda ${term}`, true, justifications));
+    }
+    catch (e) {
+        console.log(e);
+    }
 });
 //# sourceMappingURL=search.js.map

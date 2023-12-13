@@ -31,6 +31,14 @@ exports.Justification = conexion_1.default.define('Justification', {
         allowNull: false,
         defaultValue: true
     },
+    hourStartPer: {
+        type: sequelize_1.DataTypes.DATE,
+        allowNull: true,
+    },
+    hourFinishPer: {
+        type: sequelize_1.DataTypes.DATE,
+        allowNull: true,
+    },
     InstitutionStaffIdInstitutionStaff: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: false

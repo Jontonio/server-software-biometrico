@@ -111,3 +111,22 @@ export const deleteStaffAtTheInstitution = async (req:Request, res: Response)=> 
     }
 }
 
+export const getOneInsitutionStaff = async (id_institution_staff:number) => {
+    try {
+        const institutionStaff = await InstitutionStaff.findOne({
+            where:{ id_institution_staff },
+            include:[
+                { 
+                    model:Staff,
+                    attributes:['names','first_name']
+                }
+            ],
+            attributes:['id_institution_staff']
+        })
+        return institutionStaff;
+    } catch (e) {
+        throw new Error(`Error al obtener personal con id ${id_institution_staff}`);
+        
+    }
+}
+

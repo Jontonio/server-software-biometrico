@@ -5,15 +5,40 @@ import { InstitutionShift } from "../models/InstitutionShift";
 import { TypeJustification } from "../models/TypeJustification";
 import { StatusJustification } from "../models/StatusJustification";
 import { switchStatusJustificationEmail } from "../email/switchJustification";
+import { ServerAPI } from "../server/ServerAPI";
+import { Notification } from "../class/Notification";
+import { getOneInsitutionStaff } from "./institutionStaff";
+import moment from "moment";
+
+const notification = Notification.getInstance;
 
 export const registerJustification = async ( req:Request, res:Response) => {
     try {
         const { body } = req;
+        const { InstitutionStaffIdInstitutionStaff, TypeJustificationIdTypeJustification } = body;
         //add progress justification
         const newData = {...body,'StatusJustificationIdStatusJustification':1};
         const justification = await Justification.create( newData );
-        
+
+        const ieStaff = await getOneInsitutionStaff(InstitutionStaffIdInstitutionStaff);
+        const staff:any = ieStaff?.get('Staff');
+
+        const typeJustification = await getOneTypeJustification(TypeJustificationIdTypeJustification)
+
+        notification.addJustifyNotification({
+            id:Number(justification.get('id_justification')),
+            msg:`${staff.names} registro una justificación de tipo ${typeJustification?.get('type_justification')}`,
+            tableName:'Justification',
+            isRouting:true,
+            time: moment().format('llll'),
+            isRead:false
+        })
+
+        // Envía datos a los clientes conectados
+        const server = ServerAPI.getInstance;
+        server.io.emit('addNewNotification', notification.getInfoNotification() );
         return res.status(201).json( new ResponseServer('Justificación registrada correctamente', true, justification))
+
     } catch (e) {
         console.error(e);
         return res.status(500).json( new ResponseServer('Ocurrio un error al registrar justificación', false))
@@ -35,6 +60,7 @@ export const registerStatusJustification = async ( req:Request, res:Response) =>
     try {
         const { body } = req;
         const typeJustification = await StatusJustification.create( body );
+        
         return res.status(201).json( new ResponseServer('Nuevo estado de justificación registrada correctamente', true, typeJustification))
     } catch (e) {
         console.error(e);
@@ -89,9 +115,10 @@ export const getOneJustification = async ( req:Request, res:Response) => {
 export const getJustifications = async (req:Request, res:Response) => {
     try {
 
-        const {  offset = 0, limit = 5 } = req.query;
+        const {  offset = 0, limit = 5, id_status_justification = 1 } = req.query;
 
         const justifications = await Justification.findAndCountAll({
+            where:{ StatusJustificationIdStatusJustification:id_status_justification },
             include:[
                 {
                     model:InstitutionStaff,
@@ -128,6 +155,7 @@ export const getJustifications = async (req:Request, res:Response) => {
         });
 
         return res.status(200).json( new ResponseServer('Lista de justificaciones', true, justifications))
+        
     } catch (e) {
         console.error(e);
         return res.status(500).json( new ResponseServer('Ocurrio un error al obtener justificaciones', false))
@@ -195,5 +223,18 @@ export const updateStatusJustification = async ( req:Request, res:Response) => {
     } catch (e) {
         console.error(e);
         return res.status(500).json( new ResponseServer('Ocurrio un error al actualizar el estado de justificación', false))
+    }
+}
+
+export const getOneTypeJustification = async (id_type_justification:number) => {
+    try {
+        const typeJustification = await TypeJustification.findOne({
+            where:{ id_type_justification },
+            attributes:['id_type_justification','type_justification']
+        })
+        return typeJustification;
+    } catch (e) {
+        throw new Error(`Error al obtener una tipo de justificación con id ${id_type_justification}`);
+        
     }
 }

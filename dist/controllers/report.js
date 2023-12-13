@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDetailedReport = exports.getReporteDetallado = exports.counterInformation = void 0;
+exports.getDetailedReport = exports.getInfoJustifications = exports.getReporteDetallado = exports.counterInformation = void 0;
 const Response_1 = require("../class/Response");
 const reports_1 = require("../utils/reports");
 const conexion_1 = __importDefault(require("../db/conexion"));
@@ -21,8 +21,9 @@ const query_1 = require("../utils/query");
 const InstitutionShift_1 = require("../models/InstitutionShift");
 const models_1 = require("../models");
 const Shift_1 = require("../models/Shift");
-const generateDias_1 = require("../utils/generateDias");
+const generateArrayDate_1 = require("../utils/generateArrayDate");
 const moment_1 = __importDefault(require("moment"));
+const TypeJustification_1 = require("../models/TypeJustification");
 const counterInformation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const list = [];
@@ -88,6 +89,25 @@ const getReporteDetallado = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.getReporteDetallado = getReporteDetallado;
+const getInfoJustifications = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { year } = req.body;
+        const dataJustify = [];
+        const type_justifications = yield TypeJustification_1.TypeJustification.findAll({ where: { status: true } });
+        for (const value of type_justifications) {
+            const data = yield (0, query_1.queryInfoOneTypeJustification)(year, value.get('id_type_justification'));
+            const values = (0, generateArrayDate_1.transformArrayJustifications)(value.get('type_justification'), data);
+            dataJustify.push(values);
+        }
+        const message = `Conteo de información del tipo de justificación año ${2023}`;
+        return res.status(200).json(new Response_1.ResponseServer(message, true, dataJustify));
+    }
+    catch (e) {
+        console.error(e);
+        return res.status(500).json(new Response_1.ResponseServer('Ocurrio un error al obtener reporte detallado', false, null));
+    }
+});
+exports.getInfoJustifications = getInfoJustifications;
 const getDetailedReport = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { year, month, id_institution_shift } = req.body;
@@ -127,7 +147,7 @@ const getDetailedReport = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const shift = institutionShift === null || institutionShift === void 0 ? void 0 : institutionShift.get('Shift');
         const listStaffAtTheInstition = institutionShift === null || institutionShift === void 0 ? void 0 : institutionShift.get('InstitutionStaffs');
         const listStaffReports = [];
-        const daysToMonth = (0, generateDias_1.getDaysToMonth)(year, month);
+        const daysToMonth = (0, generateArrayDate_1.getDaysToMonth)(year, month);
         for (const staff of listStaffAtTheInstition) {
             const id_institution_staff = staff === null || staff === void 0 ? void 0 : staff.get('id_institution_staff');
             const reportStaff = staff === null || staff === void 0 ? void 0 : staff.get('Staff');

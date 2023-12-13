@@ -14,7 +14,7 @@ exports.Attendance = conexion_1.default.define('Attendance', {
         primaryKey: true
     },
     date_time: {
-        type: sequelize_1.DataTypes.STRING(45),
+        type: sequelize_1.DataTypes.DATE,
         allowNull: false
     },
     status: {

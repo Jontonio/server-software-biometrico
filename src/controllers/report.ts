@@ -3,12 +3,13 @@ import { ResponseServer } from "../class/Response";
 import { countBiometrico, countInstitution, countJustification, countStaff } from "../utils/reports";
 import connectDB from "../db/conexion";
 import { QueryTypes, Sequelize } from "sequelize";
-import { getDetailAttendances } from "../utils/query";
+import { getDetailAttendances, queryInfoOneTypeJustification } from "../utils/query";
 import { InstitutionShift } from "../models/InstitutionShift";
 import { Institution, InstitutionStaff, Staff, TypeStaff } from "../models";
 import { Shift } from "../models/Shift";
-import { getDaysToMonth } from "../utils/generateDias";
+import { getDaysToMonth, transformArrayJustifications } from "../utils/generateArrayDate";
 import moment from "moment";
+import { TypeJustification } from "../models/TypeJustification";
 
 export const counterInformation = async (req:Request, res: Response)=> {
     try {
@@ -71,7 +72,25 @@ export const getReporteDetallado = async (req:Request, res: Response)=> {
       
         // return response message
         return res.status(200).json( new ResponseServer(`Reporte detallado del mes ${month} del año ${year}`, true, resultado))
+        
+    } catch (e) {
+        console.error(e);
+        return res.status(500).json( new ResponseServer('Ocurrio un error al obtener reporte detallado', false, null))
+    }
+}
 
+export const getInfoJustifications = async (req:Request, res:Response) => {
+    try {
+        const { year } = req.body;
+        const dataJustify: any[] = [];
+        const type_justifications = await TypeJustification.findAll({ where:{ status:true }});
+        for(const value of type_justifications) {
+            const data = await queryInfoOneTypeJustification(year, value.get('id_type_justification') as number);
+            const values = transformArrayJustifications(value.get('type_justification') as string, data)
+            dataJustify.push(values)
+        }
+        const message = `Conteo de información del tipo de justificación año ${2023}`;
+        return res.status(200).json( new ResponseServer(message, true, dataJustify ))
     } catch (e) {
         console.error(e);
         return res.status(500).json( new ResponseServer('Ocurrio un error al obtener reporte detallado', false, null))

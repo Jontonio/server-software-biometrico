@@ -10,7 +10,7 @@ export const Attendance = connectDB.define('Attendance', {
     primaryKey: true
   },
   date_time: {
-    type: DataTypes.STRING(45),
+    type: DataTypes.DATE,
     allowNull: false
   },
   status: {

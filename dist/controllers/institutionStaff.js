@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteStaffAtTheInstitution = exports.getOneStaffAtTheInstitution = exports.getScheduleStaffAtTheInstitution = exports.updateStaffAtTheInstitution = exports.registerStaffAtTheInstitution = void 0;
+exports.getOneInsitutionStaff = exports.deleteStaffAtTheInstitution = exports.getOneStaffAtTheInstitution = exports.getScheduleStaffAtTheInstitution = exports.updateStaffAtTheInstitution = exports.registerStaffAtTheInstitution = void 0;
 const Response_1 = require("../class/Response");
 const models_1 = require("../models");
 const registerStaffAtTheInstitution = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -117,4 +117,23 @@ const deleteStaffAtTheInstitution = (req, res) => __awaiter(void 0, void 0, void
     }
 });
 exports.deleteStaffAtTheInstitution = deleteStaffAtTheInstitution;
+const getOneInsitutionStaff = (id_institution_staff) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const institutionStaff = yield models_1.InstitutionStaff.findOne({
+            where: { id_institution_staff },
+            include: [
+                {
+                    model: models_1.Staff,
+                    attributes: ['names', 'first_name']
+                }
+            ],
+            attributes: ['id_institution_staff']
+        });
+        return institutionStaff;
+    }
+    catch (e) {
+        throw new Error(`Error al obtener personal con id ${id_institution_staff}`);
+    }
+});
+exports.getOneInsitutionStaff = getOneInsitutionStaff;
 //# sourceMappingURL=institutionStaff.js.map

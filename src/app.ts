@@ -2,9 +2,9 @@
 
 
 import dot from 'dotenv'
-import { Server } from './server/Server'
+import { ServerAPI } from './server/ServerAPI'
 
 dot.config();
 
-const server = new Server();
+const server = ServerAPI.getInstance;
 server.listen();

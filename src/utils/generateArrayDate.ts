@@ -30,3 +30,14 @@ export const getDaysToMonth = (anio: number, mes: number): DayInfo[] => {
 
   return diasArray;
 }
+
+export const transformArrayJustifications = (label: string, arr: any[]) => {
+  
+  const data = Array.from({ length: 12 }, () => 0);
+
+  arr.forEach(value => {
+    data[value.month - 1] = value.counter;
+  });
+
+  return { label, data };
+};

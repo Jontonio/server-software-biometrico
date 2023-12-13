@@ -8,20 +8,43 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateStatusJustification = exports.getStatusJustifications = exports.getTypeJustifications = exports.getJustifications = exports.getOneJustification = exports.registerStatusJustification = exports.registerTypeJustification = exports.registerJustification = void 0;
+exports.getOneTypeJustification = exports.updateStatusJustification = exports.getStatusJustifications = exports.getTypeJustifications = exports.getJustifications = exports.getOneJustification = exports.registerStatusJustification = exports.registerTypeJustification = exports.registerJustification = void 0;
 const Response_1 = require("../class/Response");
 const models_1 = require("../models");
 const InstitutionShift_1 = require("../models/InstitutionShift");
 const TypeJustification_1 = require("../models/TypeJustification");
 const StatusJustification_1 = require("../models/StatusJustification");
 const switchJustification_1 = require("../email/switchJustification");
+const ServerAPI_1 = require("../server/ServerAPI");
+const Notification_1 = require("../class/Notification");
+const institutionStaff_1 = require("./institutionStaff");
+const moment_1 = __importDefault(require("moment"));
+const notification = Notification_1.Notification.getInstance;
 const registerJustification = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { body } = req;
+        const { InstitutionStaffIdInstitutionStaff, TypeJustificationIdTypeJustification } = body;
         //add progress justification
         const newData = Object.assign(Object.assign({}, body), { 'StatusJustificationIdStatusJustification': 1 });
         const justification = yield models_1.Justification.create(newData);
+        const ieStaff = yield (0, institutionStaff_1.getOneInsitutionStaff)(InstitutionStaffIdInstitutionStaff);
+        const staff = ieStaff === null || ieStaff === void 0 ? void 0 : ieStaff.get('Staff');
+        const typeJustification = yield (0, exports.getOneTypeJustification)(TypeJustificationIdTypeJustification);
+        notification.addJustifyNotification({
+            id: Number(justification.get('id_justification')),
+            msg: `${staff.names} registro una justificación de tipo ${typeJustification === null || typeJustification === void 0 ? void 0 : typeJustification.get('type_justification')}`,
+            tableName: 'Justification',
+            isRouting: true,
+            time: (0, moment_1.default)().format('llll'),
+            isRead: false
+        });
+        // Envía datos a los clientes conectados
+        const server = ServerAPI_1.ServerAPI.getInstance;
+        server.io.emit('addNewNotification', notification.getInfoNotification());
         return res.status(201).json(new Response_1.ResponseServer('Justificación registrada correctamente', true, justification));
     }
     catch (e) {
@@ -101,8 +124,9 @@ const getOneJustification = (req, res) => __awaiter(void 0, void 0, void 0, func
 exports.getOneJustification = getOneJustification;
 const getJustifications = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { offset = 0, limit = 5 } = req.query;
+        const { offset = 0, limit = 5, id_status_justification = 1 } = req.query;
         const justifications = yield models_1.Justification.findAndCountAll({
+            where: { StatusJustificationIdStatusJustification: id_status_justification },
             include: [
                 {
                     model: models_1.InstitutionStaff,
@@ -206,4 +230,17 @@ const updateStatusJustification = (req, res) => __awaiter(void 0, void 0, void 0
     }
 });
 exports.updateStatusJustification = updateStatusJustification;
+const getOneTypeJustification = (id_type_justification) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const typeJustification = yield TypeJustification_1.TypeJustification.findOne({
+            where: { id_type_justification },
+            attributes: ['id_type_justification', 'type_justification']
+        });
+        return typeJustification;
+    }
+    catch (e) {
+        throw new Error(`Error al obtener una tipo de justificación con id ${id_type_justification}`);
+    }
+});
+exports.getOneTypeJustification = getOneTypeJustification;
 //# sourceMappingURL=justification.js.map
