@@ -3,7 +3,7 @@ import { Staff } from "../models/Staff";
 import { body, check } from "express-validator";
 import { existInstitution } from "./institution-validation";
 import { existInstitutionStaff } from "./institution-staff-validation";
-import { existInstitutionIdShift } from "./institution-shift-validation copy";
+import { existInstitutionIdShift } from "./institution-shift-validation";
 import { existIdTypeStaff } from "./type-staff-validation";
 
 export const staffValidator = () => {

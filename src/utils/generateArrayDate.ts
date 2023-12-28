@@ -4,6 +4,7 @@ moment.locale('es');
 export interface DayInfo {
   startDay: string;
   dayNumber: number;
+  isHolyDay:boolean,
   numberStartDay?:number;
 }
 export const days = [
@@ -32,6 +33,7 @@ export const getDaysToMonth = (anio: number, mes: number): DayInfo[] => {
       const dayInfo: DayInfo = {
         startDay:startDay=='miércoles'?startDay.slice(0,2).toUpperCase():startDay.slice(0,1).toUpperCase(),
         dayNumber: dia,
+        isHolyDay:false,
         numberStartDay: days.find(day => day.name === startDay)?.code || 0,
       };
       diasArray.push(dayInfo);

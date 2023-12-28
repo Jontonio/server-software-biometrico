@@ -24,7 +24,7 @@ export const updateWorkScheduleIE = async (req:Request, res: Response)=> {
         const { body } = req;
         // register new work schedule institution
         const workScheduleIE = await WorkScheduleInstitution.findOne({
-            where:{ id_work_schedule_institution, status:true}
+            where:{ id_work_schedule_institution, status:true }
         });
 
         const respUpdate = await workScheduleIE?.set( body ).save();
@@ -43,7 +43,7 @@ export const deleteWorkScheduleIE = async (req:Request, res: Response)=> {
         const { id_work_schedule_institution } = req.params;
         // register new work schedule institution
         const workScheduleIE = await WorkScheduleInstitution.findOne({
-            where:{ id_work_schedule_institution, status:true}
+            where:{ id_work_schedule_institution, status:true }
         });
 
         const respDelete = await workScheduleIE?.set({ status:false }).save();

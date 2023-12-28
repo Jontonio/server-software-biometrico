@@ -3,7 +3,7 @@ import { verifyError } from "../helpers/verify-error";
 import { IEStaffController } from "../controllers";
 import { validateJWT, haveRole, institutionStaffMiddleware } from "../middlewares";
 import { checkIdInstitutionStaff, institutionStaffUpdateValidator, institutionStaffValidator } from "../helpers/institution-staff-validation";
-import { checkIdInstitutionShift } from "../helpers/institution-shift-validation copy";
+import { checkIdInstitutionShift } from "../helpers/institution-shift-validation";
 
 export const routerInstitutionStaff = Router();
 

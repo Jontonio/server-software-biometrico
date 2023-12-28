@@ -8,7 +8,7 @@ export const isAdminRole = (req: CustomRequest | any, res:Response, next:NextFun
     try {  
         // verify is exist user on request 
         if(!req.user){
-            return res.status(401).json( new ResponseServer(`Error en el servidor al verificar usuario`, false, null));
+            return res.status(401).json( new ResponseServer(`Error en el servidor al verificar usuario`, false));
         }
         // get data from user 
         const { Role, names } = req.user;
@@ -16,13 +16,13 @@ export const isAdminRole = (req: CustomRequest | any, res:Response, next:NextFun
         // verify if user is ADMIN ROLE
         if(role != 'ADMIN_ROLE'){
             // return response message
-            return res.status(401).json( new ResponseServer(`Operación no autorizada el usuario ${names} no tiene el rol ADMIN_ROLE`, false, null))
+            return res.status(401).json( new ResponseServer(`Operación no autorizada el usuario ${names} no tiene el rol ADMIN_ROLE`, false))
         }
         next();
 
     } catch (e:any) {
         console.log(e)
-        return res.status(500).json( new ResponseServer(`Error en el servidor: ${e.message}`, false, null))
+        return res.status(500).json( new ResponseServer(`Error en el servidor: ${e.message}`, false))
     }
 }
 

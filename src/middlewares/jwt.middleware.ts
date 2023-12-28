@@ -15,7 +15,7 @@ export const validateJWT = async (req:CustomRequest | any, res:Response, next:Ne
 
         // verify if exist one authorization
         if(!authorization){
-            return res.status(401).json( new ResponseServer('Acceso no autorizado, necesario la autorización para realizar acciones en el sistema', false, null))
+            return res.status(401).json( new ResponseServer('Acceso no autorizado, necesario la autorización para realizar acciones en el sistema', false))
         }
     
         // get data from payload
@@ -32,7 +32,7 @@ export const validateJWT = async (req:CustomRequest | any, res:Response, next:Ne
 
         // verify if not exist user
         if(!user){
-            return res.status(401).json( new ResponseServer('Acceso no autorizado, necesario la autorización para realizar acciones en el sistema', false, null));
+            return res.status(401).json( new ResponseServer('Acceso no autorizado, necesario la autorización para realizar acciones en el sistema', false));
         }
 
         req.user = user;

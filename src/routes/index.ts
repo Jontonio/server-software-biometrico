@@ -17,3 +17,4 @@ export { routerJustification } from './justification.route';
 export { routerShift } from './shift.route';
 export { routerSearch } from './search.route'
 export { routerEmail } from './email.route'
+export { routerHolyDay } from './holyDay.route'

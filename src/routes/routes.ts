@@ -18,6 +18,7 @@ import {
     routerShift,
     routerSearch,
     routerEmail,
+    routerHolyDay,
     routerBiometric } from '../routes';
 
 const routes:Router[] = [
@@ -27,6 +28,7 @@ const routes:Router[] = [
     routerRoles,
     routerStaff,
     routerTypeStaff,
+    routerHolyDay,
     routerAttendance,
     routerTypeAttendance,
     routerInstitutionStaff,

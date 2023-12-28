@@ -3,7 +3,7 @@ import { verifyError } from "../helpers";
 import { haveRole, isAdminRole, validateJWT } from "../middlewares";
 import { shiftController } from "../controllers";
 import { shiftValidator } from "../helpers/shift-validation";
-import { checkIdInstitutionShift } from "../helpers/institution-shift-validation copy";
+import { checkIdInstitutionShift } from "../helpers/institution-shift-validation";
 
 export const routerShift = Router();
 

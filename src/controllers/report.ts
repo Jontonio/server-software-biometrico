@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import { ResponseServer } from "../class/Response";
 import { countBiometrico, countInstitution, countJustification, countStaff } from "../utils/reports";
-import connectDB from "../db/conexion";
-import { QueryTypes, Sequelize } from "sequelize";
 import { getDetailAttendances, queryInfoOneTypeJustification } from "../utils/query";
 import { InstitutionShift } from "../models/InstitutionShift";
 import { Institution, InstitutionStaff, Staff, TypeStaff, WorkScheduleInstitution } from "../models";
@@ -10,6 +8,9 @@ import { Shift } from "../models/Shift";
 import { DayInfo, getDaysToMonth, transformArrayJustifications } from "../utils/generateArrayDate";
 import moment from "moment";
 import { TypeJustification } from "../models/TypeJustification";
+import { IEShiftHolyDay } from "../models/InstitutionShiftHolyDay";
+import sequelize from "sequelize";
+import { HolyDays } from "../models/HolyDays";
 
 export const counterInformation = async (req:Request, res: Response)=> {
     try {
@@ -96,7 +97,7 @@ export const getDetailedReport = async (req:Request, res: Response)=> {
                         },
                         {
                             model:WorkScheduleInstitution,
-                            attributes:{ exclude:['createdAt','updatedAt'] }
+                            attributes:{ exclude:['created At','updatedAt'] }
                         }
                     ],
                     attributes:{ exclude:['createdAt','updatedAt'] },
@@ -110,6 +111,24 @@ export const getDetailedReport = async (req:Request, res: Response)=> {
                     model: Shift,
                     where:{ status: true },
                     attributes:{ exclude:['createdAt','updatedAt'] }
+                },
+                {
+                    model:IEShiftHolyDay,
+                    where: {
+                        [sequelize.Op.and]: [
+                            sequelize.where(sequelize.fn('MONTH', sequelize.col('IEShiftHolyDays.date')), month),
+                            sequelize.where(sequelize.fn('YEAR', sequelize.col('IEShiftHolyDays.date')), year),
+                            { status: true }
+                        ]
+                    },
+                    attributes:{ exclude:['createdAt','updatedAt'] },
+                    required:false,
+                    include:[
+                        { 
+                            model:HolyDays,
+                            attributes:{ exclude:['createdAt','updatedAt'] },
+                        }
+                    ]
                 }
             ]
         })
@@ -119,8 +138,10 @@ export const getDetailedReport = async (req:Request, res: Response)=> {
         const institution = institutionShift?.get('Institution') as any;
         const shift = institutionShift?.get('Shift') as any;
         const listStaffAtTheInstition = institutionShift?.get('InstitutionStaffs') as any[];
+        const listHolyDays = institutionShift?.get('IEShiftHolyDays') as any[];
+
         const listStaffReports = [];
-        const daysToMonth = getDaysToMonth(year, month);
+        let daysToMonth = getDaysToMonth(year, month);
         
         for(const staff of listStaffAtTheInstition){
 
@@ -137,20 +158,37 @@ export const getDetailedReport = async (req:Request, res: Response)=> {
 
                 const attendance:any = resAttendances.find((t:any) => t.day === day.dayNumber);
 
+                //TODO: verify if staff have an attendance
                 if (attendance) {
+
                     return {
                             ...day,
                             statusAttendance: attendance.statusAttendance,
                             date_time: attendance.date_time,
-                    };
-                } else {
+                    }
 
+                } 
+                
+                //TODO: in here is evaluate if staff haven't attendance
+                const holyDays = listHolyDays.find(holyDays => moment(holyDays.date).date()==day.dayNumber );
+
+                if(holyDays){
                     return {
-                            ...day,
-                            statusAttendance: WorkScheduleInstitutions.find((val:any) => val.day==day.numberStartDay)?'F':'_',
-                            date_time: null,
-                    };
+                        ...day,
+                        statusAttendance: 'I',
+                        date_time: null,
+                    }; 
                 }
+
+                //TODO: verify is staff not holy and have work schedule institutions
+                const statusIsMissingStaff = WorkScheduleInstitutions.find((wsIE:any) => wsIE.day==day.numberStartDay)?'F':'_'
+                    
+                return {
+                        ...day,
+                        statusAttendance: statusIsMissingStaff,
+                        date_time: null,
+                };
+
             });
             
             const data = {
@@ -164,6 +202,18 @@ export const getDetailedReport = async (req:Request, res: Response)=> {
             listStaffReports.push(data);
 
         }
+
+        //TODO:update holy days
+        daysToMonth = daysToMonth.map(val => {
+
+            const holyDay = listHolyDays.find(holyDay => (moment(holyDay.date).date()==val.dayNumber && holyDay.HolyDay.isGlobal==true))
+
+            if(holyDay){
+                val.isHolyDay = true;
+            }
+
+            return val;
+        });
 
         const dataReprot = {
             daysToMonth,

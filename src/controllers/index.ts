@@ -16,10 +16,12 @@ import * as justifyController from "./justification";
 import * as shiftController from "./shift";
 import * as searchController from "./search";
 import * as emailController from "./email";
+import * as holyDayController from "./holyDay";
 
 export{
     reportController,
     IEStaffController,
+    holyDayController,
     staffController,
     biometricController,
     institucionController,

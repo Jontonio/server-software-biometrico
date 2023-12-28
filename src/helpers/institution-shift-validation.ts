@@ -1,16 +1,5 @@
-import { body, check } from "express-validator";
-import { Shift } from "../models/Shift";
+import { check } from "express-validator";
 import { InstitutionShift } from "../models/InstitutionShift";
-
-// export const InstitutionShiftValidator = () => {
-//     return[
-//         body('shift').not()
-//                      .isEmpty()
-//                      .withMessage('El turno a crear es requerido')
-//                      .bail()
-//                      .custom( existShift )
-//     ]
-// }
 
 export const checkIdInstitutionShift = () => {
     return[
@@ -20,22 +9,6 @@ export const checkIdInstitutionShift = () => {
                      .bail()
                      .custom( existInstitutionIdShift )
     ]
-}
-
-const existInstitutionShift = async (shift:string) => {
-
-    if(!shift){
-        throw new Error('El turno es requerido');
-    }
-
-    const existShift = await Shift.findOne({
-        where:{ shift }
-    })
-
-    if(existShift){
-        throw new Error(`El turno ${shift} ya se encuentra registrado en el sistema`);
-    }
-    return true;
 }
 
 export const existInstitutionIdShift = async (id_institution_shift:string) => {

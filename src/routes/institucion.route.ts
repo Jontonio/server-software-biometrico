@@ -4,7 +4,7 @@ import { institucionController} from "../controllers";
 import { verifyError, modularCodeValidator, codModularExistListJSON, InstitutionValidator } from "../helpers";
 import { haveRole, isAdminRole, validateJWT } from "../middlewares";
 import { institucionMiddleware } from "../middlewares";
-import { checkIdInstitutionShift } from "../helpers/institution-shift-validation copy";
+import { checkIdInstitutionShift } from "../helpers/institution-shift-validation";
 
 export const routerInstitution = Router();
 

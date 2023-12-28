@@ -1,4 +1,4 @@
-import { body } from "express-validator"
+import { body, check } from "express-validator"
 import { existWorkSchedule } from "./work-schedule-valiation";
 import { existInstitutionStaff } from "./institution-staff-validation";
 import { days } from "../resources/types";
@@ -37,7 +37,7 @@ export const workScheduleIEValidator = () => {
 
 export const verifyIdWorkScheduleIE = () => {
       return [
-            body('id_work_schedule_institution').not()
+            check('id_work_schedule_institution').not()
                                                 .isEmpty()
                                                 .withMessage('El id del horario de trabajo del personal es requerido')
                                                 .bail()

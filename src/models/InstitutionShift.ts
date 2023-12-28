@@ -1,6 +1,7 @@
 import connectDB from '../db/conexion';
 import { DataTypes }  from 'sequelize';
 import { InstitutionStaff } from './InstitutionStaff';
+import { IEShiftHolyDay } from './InstitutionShiftHolyDay';
 
 export const InstitutionShift = connectDB.define('InstitutionShift', {
   // Here define all attributes from table intitution staff
@@ -34,5 +35,12 @@ InstitutionShift.hasMany(InstitutionStaff);
 InstitutionStaff.belongsTo(InstitutionShift,{
   foreignKey: 'InstitutionShiftIdInstitutionShift'
 });
+
+// relationship with table holy days
+InstitutionShift.hasMany(IEShiftHolyDay);
+IEShiftHolyDay.belongsTo(InstitutionShift,{
+  foreignKey: 'InstitutionShiftIdInstitutionShift'
+});
+
 // `sequelize.define` also returns the model
 console.log(InstitutionShift === connectDB.models.InstitutionShift); // true

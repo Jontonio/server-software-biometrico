@@ -1,7 +1,7 @@
 import { body, check } from "express-validator"
 import { existStaff } from "./staff-validation"
 import { InstitutionStaff } from "../models/InstitutionStaff"
-import { existInstitutionIdShift } from "./institution-shift-validation copy"
+import { existInstitutionIdShift } from "./institution-shift-validation"
 import { existIdTypeStaff } from "./type-staff-validation"
 
 export const institutionStaffValidator = () => {
