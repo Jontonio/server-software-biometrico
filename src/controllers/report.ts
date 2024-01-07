@@ -175,13 +175,13 @@ export const getDetailedReport = async (req:Request, res: Response)=> {
                 if(holyDays){
                     return {
                         ...day,
-                        statusAttendance: 'I',
+                        statusAttendance: 'J',
                         date_time: null,
                     }; 
                 }
 
                 //TODO: verify is staff not holy and have work schedule institutions
-                const statusIsMissingStaff = WorkScheduleInstitutions.find((wsIE:any) => wsIE.day==day.numberStartDay)?'F':'_'
+                const statusIsMissingStaff = WorkScheduleInstitutions.find((wsIE:any) => wsIE.day==day.numberStartDay)?'I':'_'
                     
                 return {
                         ...day,

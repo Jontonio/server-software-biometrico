@@ -11,7 +11,7 @@ export const Justification = connectDB.define('Justification', {
   },
   date_justification: {
     type: DataTypes.DATE,
-    allowNull: false,
+    allowNull: true,
   },
   description_justification: {
     type: DataTypes.STRING(300),
@@ -32,6 +32,14 @@ export const Justification = connectDB.define('Justification', {
     allowNull: true,
   },
   hourFinishPer:{
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  startDateLincen:{
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  finishDateLincen:{
     type: DataTypes.DATE,
     allowNull: true,
   },

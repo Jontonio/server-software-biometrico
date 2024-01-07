@@ -1,5 +1,4 @@
 import { body, check } from "express-validator"
-import { typeJustification } from "../resources/types"
 import { existInstitutionStaff } from "./institution-staff-validation"
 import { TypeJustification } from "../models/TypeJustification"
 import { StatusJustification } from "../models/StatusJustification"
@@ -14,10 +13,8 @@ export const justificationValidator = () => {
                 .bail()
                 .custom((TypeJustificationIdTypeJustification) => existIdTypeJustification(TypeJustificationIdTypeJustification))
                 .bail(),
-        body('date_justification').not()
-                                .isEmpty()
-                                .withMessage(`La fecha de justificación para (${typeJustification}) es requerido`)
-                                .bail()
+        body('date_justification')
+                                .optional({values:'null'})
                                 .isISO8601()
                                 .withMessage('La fechaHora debe estar en formato ISO8601 (YYYY-MM-DDTHH:mm:ss)')
                                 .bail(),
@@ -26,12 +23,20 @@ export const justificationValidator = () => {
                                 .withMessage(`El archivo de justificación es requerido`)
                                 .bail()
                                 .custom( checkURLFile ),
-        body('hourStartPer').optional()
+        body('hourStartPer').optional({values:'null'})
                             .isISO8601()
                             .withMessage("El campo hora de inicio de permiso debe estar en formato ISO 8601"),
-        body('hourFinishPer').optional()
+        body('hourFinishPer').optional({values:'null'})
                              .isISO8601()
                              .withMessage("El campo hora de fin de permiso debe estar en formato ISO 8601"),
+        body('startDateLincen').optional({values:'null'})
+                                .isISO8601()
+                                .withMessage('La fecha de inicio de lincencia de goce tiene que estar en formato ISO 8601 (fecha)')
+                                .bail(),
+        body('finishDateLincen').optional({values:'null'})
+                                .isISO8601()
+                                .withMessage('La fecha final de lincencia de goce tiene que estar en formato ISO 8601 (fecha)')
+                                .bail(),
         body('InstitutionStaffIdInstitutionStaff').not()
                                                 .isEmpty()
                                                 .withMessage(`El id del personal en la institución es requerido`)
